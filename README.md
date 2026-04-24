@@ -1,69 +1,95 @@
-# Teste Camp FullStack API
+# Teste Camp FullStack API (Grupo Cred)
 
-API REST em **Node.js + Express + TypeScript**, com **Prisma ORM** e **SQLite**.
+API REST desenvolvida para um teste técnico de **Desenvolvedor Full Stack**. Inclui autenticação via **JWT**, estrutura modular por domínios e documentação via **Swagger**.
 
-## Requisitos
+## Tech Stack
 
-- Node.js (recomendado 18+)
+![Node.js]
+![TypeScript]
+![Express]
+![Prisma]
+![SQLite]
+![Jest]
+![Swagger]
+
+## Arquitetura
+
+O projeto segue uma arquitetura **estritamente modular por domínio**, concentrada em `src/modules/`:
+
+- **Auth** (`src/modules/auth`): login e emissão de JWT
+- **Users** (`src/modules/users`): cadastro, atualização, listagem e exclusão lógica
+- **Orders** (`src/modules/orders`): criação e consultas de pedidos
+
+Rotas e middlewares:
+
+- **Rotas centralizadas** em `src/routes.ts`
+- **Middleware JWT** em `src/middlewares/auth.middleware.ts`
+
+## Getting Started
+
+### Requisitos
+
+- Node.js (Desenvolvido e testado na versão **v24.14.1**)
 - npm
 
-## Instalação
+### Instalação
 
 ```bash
 npm install
 ```
 
-## Banco de dados (SQLite)
+### Banco de dados (SQLite)
 
-O SQLite é configurado via `.env`:
+O banco é SQLite e é configurado via `.env`:
 
 - `DATABASE_URL="file:./dev.db"`
 
-Para aplicar o schema no banco (criar/atualizar as tabelas) use:
+Aplicar o schema (criar/atualizar tabelas):
 
 ```bash
 npx prisma db push
 ```
 
-Opcional (migrações em dev):
-
-```bash
-npx prisma migrate dev
-```
-
-## Rodar a API
-
-Desenvolvimento:
+### Rodar a API
 
 ```bash
 npm run dev
 ```
 
-Build + produção:
+Endpoint de saúde:
 
-```bash
-npm run build
-npm start
-```
+- `GET /health`
 
-## Swagger
+## Documentação (Swagger) e Autenticação
 
-Com a API rodando, acesse:
+Com a API rodando, acesse a documentação:
 
 - `http://localhost:3000/docs`
 
-Para acessar rotas protegidas:
+Rotas protegidas exigem JWT (Bearer Token):
 
-- clique em **Authorize**
-- informe: `Bearer <seu_token_jwt>`
+- Faça **POST `/login`**
+- Copie o `token` retornado
+- No Swagger, clique em **Authorize** e informe:
+  - `Bearer <seu_token>`
 
-## Rotas
+## Rotas principais
 
-- Auth: `POST /login`
-- Users: `POST /users`, `GET /users`, `PUT /users/:id`, `DELETE /users/:id`
-- Orders: `POST /orders`, `GET /orders`, `GET /orders/user/:userId`
+- **Auth**
+  - `POST /login`
+- **Users**
+  - `POST /users`
+  - `GET /users` (protegido)
+  - `PUT /users/:id` (protegido)
+  - `DELETE /users/:id` (protegido, exclusão lógica via `deletedAt`)
+- **Orders**
+  - `POST /orders` (protegido)
+  - `GET /orders` (protegido)
+  - `GET /orders/user/:userId` (protegido)
 
 ## Testes
+
+A suíte de testes usa **Jest + Supertest** e **mocks do Prisma** (via `jest-mock-extended`), evitando dependência de SQLite durante os testes.
 
 Rodar a suíte:
 
@@ -71,7 +97,7 @@ Rodar a suíte:
 npm run test
 ```
 
-Rodar com cobertura:
+Cobertura:
 
 ```bash
 npm run test:coverage
